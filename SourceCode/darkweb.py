@@ -2,6 +2,7 @@ import networkx as nx
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 with open('C:/Users/nicol/Desktop/darkweb.csv', 'r') as csvfile:
     reader = csv.reader(csvfile, delimiter=";")
@@ -122,26 +123,12 @@ print("Dimension of the largest OUT component (OUT): " + str(len(out_component))
 avg_path = nx.average_shortest_path_length(largest_scc)
 print("Average shortest path length in SCC: " + str(avg_path))
 
-"""
-max_shortest = 0
-for node_a in G.nodes():
-    for node_b in G.nodes():
-        if node_a == node_b:
-            continue
-        try: 
-            shortest = len(nx.shortest_path(G, source=node_a, target=node_b)) - 2
-            if shortest > max_shortest:
-                max_shortest = shortest
-        except:
-            continue    
-"""
-# calcola i shortest path
+# shortest path calculator and the percentage of the nodes that have that shortest path
 shortest_paths = nx.shortest_path(largest_scc)
 path_lengths = {}
 total_paths = 0
 for source in shortest_paths:
     for target in shortest_paths[source]:
-        print(shortest_paths[source][target])
         path_length = len(shortest_paths[source][target]) - 1
         total_paths += 1
         if path_length not in path_lengths:
@@ -153,7 +140,52 @@ path_percentages = {}
 for length, count in path_lengths.items():
     path_percentages[length] = count / total_paths * 100
 
-plt.bar(list(path_percentages.keys()), list(path_percentages.values()))
-plt.xlabel('Shortest Path Length')
-plt.ylabel('Nodes percentage')
+#plt.bar(list(path_percentages.keys()), list(path_percentages.values()))
+#plt.xlabel('Shortest Path Length')
+#plt.ylabel('Nodes percentage')
+#plt.show()
+
+# robustness - random attack 
+initial_size = len(G.nodes)
+initial_size_scc = 297
+# Inizializza le liste per i risultati del random attack
+sizes = []
+removed_perc = []
+
+G_attack = G.copy()
+scc_subgraphs = (G.subgraph(c) for c in nx.strongly_connected_components(G))
+largest_scc = max(scc_subgraphs, key=len)
+G_attack = largest_scc.copy()
+
+pr = nx.pagerank(G_attack, weight='weight')
+
+# crea una lista ordinata di coppie (nodo, pagerank)
+pr_sorted = sorted(pr.items(), key=lambda x: x[1], reverse=True)
+print(pr_sorted)
+# crea una lista ordinata di nodi in ordine decrescente di PageRank centrality
+top_nodes = [x[0] for x in pr_sorted]
+
+print(top_nodes)
+#vedere perche le pagerank sono diverse
+
+for i in range(1, initial_size_scc // 2 + 1):
+    
+    # Sceglie casualmente un nodo da rimuovere
+    #nodes_to_remove = np.random.choice(G_attack, replace=False)
+    nodes_to_remove = top_nodes[i]
+    # Rimuove il nodo
+    
+    G_attack.remove_node(nodes_to_remove)
+
+    # Calcola la dimensione rimanente del grafo dopo il random attack
+    #size = len(G_attack.nodes)
+    size = len(max(nx.strongly_connected_components(G_attack), key=len))
+    sizes.append(size / initial_size_scc * 100)
+    removed_perc.append(i / initial_size_scc * 100)
+
+
+print(size)
+plt.plot(removed_perc, sizes, linestyle='-', color='blue')
+plt.xlabel('Percentuale di nodi rimossi')
+plt.ylabel('Dimensione del grafo in termini di nodi')
 plt.show()
