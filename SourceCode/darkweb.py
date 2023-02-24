@@ -4,57 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from collections import Counter
-
-'''
-
-# robustness - random attack 
-initial_size = len(G.nodes)
-initial_size_scc = 297
-# Inizializza le liste per i risultati del random attack
-sizes = []
-removed_perc = []
-
-G_attack = G.copy()
-scc_subgraphs = (G.subgraph(c) for c in nx.strongly_connected_components(G))
-largest_scc = max(scc_subgraphs, key=len)
-G_attack = largest_scc.copy()
-
-pr = nx.pagerank(G_attack, weight='weight')
-
-# crea una lista ordinata di coppie (nodo, pagerank)
-pr_sorted = sorted(pr.items(), key=lambda x: x[1], reverse=True)
-print(pr_sorted)
-# crea una lista ordinata di nodi in ordine decrescente di PageRank centrality
-top_nodes = [x[0] for x in pr_sorted]
-
-print(top_nodes)
-#vedere perche le pagerank sono diverse
-
-for i in range(1, initial_size_scc // 2 + 1):
-    
-    # Sceglie casualmente un nodo da rimuovere
-    #nodes_to_remove = np.random.choice(G_attack, replace=False)
-    nodes_to_remove = top_nodes[i]
-    # Rimuove il nodo
-    
-    G_attack.remove_node(nodes_to_remove)
-
-    # Calcola la dimensione rimanente del grafo dopo il random attack
-    #size = len(G_attack.nodes)
-    size = len(max(nx.strongly_connected_components(G_attack), key=len))
-    sizes.append(size / initial_size_scc * 100)
-    removed_perc.append(i / initial_size_scc * 100)
-
-
-print(size)
-plt.plot(removed_perc, sizes, linestyle='-', color='blue')
-plt.xlabel('Percentuale di nodi rimossi')
-plt.ylabel('Dimensione del grafo in termini di nodi')
-plt.show()
-'''
+from networkx.algorithms import community
 
 def createGraph():
-    with open('C:/Users/nicol/Desktop/darkweb.csv', 'r') as csvfile:
+    with open('C:/Users/nicol/Documents/GitHub/DarkWeb/Dataset/darkweb.csv', 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=";")
         edges = []
         next(reader)
@@ -76,6 +29,13 @@ def authAndHubs(graph):
             writer.writerow({'Id': node, 'Hubs': hubs, 'Auth': authorities[node]})
 
 def initialStats(graph):
+    n = graph.number_of_nodes()
+    efficiency = 0.0
+    for node in graph:
+        sp = nx.shortest_path_length(graph, source=node)
+        efficiency += sum(1.0/l for l in sp.values() if l > 0)
+    efficiency /= (n*(n-1))
+    print("Efficiency ", efficiency)
     print("Density " + str(nx.density(graph)))
     print("Assortativity coefficient " + str(nx.degree_assortativity_coefficient(graph, weight="weight")))
     print("Number of isolated nodes " + str(nx.number_of_isolates(graph)))
@@ -302,10 +262,106 @@ def shortestPathAnalysisWcc(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
 
+def robustnessAttackLargestWcc(graph):
+    initial_size_wcc = len(max(nx.weakly_connected_components(graph), key=len))
+    sizes_random = []
+    removed_perc_random = []
+    sizes_pr = []
+    removed_perc_pr = []
+    G_attack_wcc = graph.copy()
+
+    pr_wcc = nx.pagerank(G_attack_wcc, weight='weight')
+
+    sorted_nodes_pr = sorted(pr_wcc.items(), key=lambda x: x[1], reverse=True)
+    top_nodes_pr = [x[0] for x in sorted_nodes_pr]
+
+    for i in range(0, (initial_size_wcc // 2)):      
+        node_to_remove = np.random.choice(G_attack_wcc.nodes, size=1, replace=False)  
+        G_attack_wcc.remove_nodes_from(node_to_remove)
+        #print(len(G_attack_wcc.nodes))
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        #print(str(size) + " " + str(nx.number_weakly_connected_components(G_attack_wcc)))
+        sizes_random.append(size / initial_size_wcc * 100)
+        removed_perc_random.append(i / initial_size_wcc * 100)
+    
+    G_attack_wcc = graph.copy()
+    for i in range(0, (initial_size_wcc // 2)):        
+        G_attack_wcc.remove_node(top_nodes_pr[i])
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        #print(str(size) + " " + str(nx.number_weakly_connected_components(G_attack_wcc)))
+        sizes_pr.append(size / initial_size_wcc * 100)
+        removed_perc_pr.append(i / initial_size_wcc * 100)
+    
+    plt.plot(removed_perc_random, sizes_random, linestyle='-', color='blue', label="Random")
+    plt.plot(removed_perc_pr, sizes_pr, linestyle='-', color='red', label="PageRank")
+    plt.xlabel('Nodes percentage removed')
+    plt.ylabel('Largest WCC dimension')
+    plt.legend()
+    plt.show()
+
+def robustnessAttackEfficiency(graph):
+    initial_size_wcc = len(max(nx.weakly_connected_components(graph), key=len))
+    efficiency_random = []
+    removed_perc_random = []
+    efficiency_pr = []
+    removed_perc_pr = []
+    G_attack_wcc = graph.copy()
+
+    pr_wcc = nx.pagerank(G_attack_wcc, weight='weight')
+    sorted_nodes_pr = sorted(pr_wcc.items(), key=lambda x: x[1], reverse=True)
+    top_nodes_pr = [x[0] for x in sorted_nodes_pr]
+
+    for i in range(0, 600):      
+        node_to_remove = np.random.choice(G_attack_wcc.nodes, size=1, replace=False)  
+        G_attack_wcc.remove_nodes_from(node_to_remove)
+
+        n = graph.number_of_nodes()
+        efficiency = 0.0
+        for node in G_attack_wcc:
+            sp = nx.shortest_path_length(G_attack_wcc, source=node)
+            efficiency += sum(1.0/l for l in sp.values() if l > 0)
+        efficiency /= (n*(n-1))
+
+        efficiency_random.append(efficiency)
+        removed_perc_random.append(i / initial_size_wcc * 100)
+    
+    G_attack_wcc = graph.copy()
+    for i in range(0, 600):        
+        G_attack_wcc.remove_node(top_nodes_pr[i])
+
+        n = graph.number_of_nodes()
+
+        efficiency = 0.0
+        for node in G_attack_wcc:
+            sp = nx.shortest_path_length(G_attack_wcc, source=node)
+            efficiency += sum(1.0/l for l in sp.values() if l > 0)
+        efficiency /= (n*(n-1))
+
+        efficiency_pr.append(efficiency)
+        removed_perc_pr.append(i / initial_size_wcc * 100)
+    
+    plt.plot(removed_perc_random, efficiency_random, linestyle='-', color='blue', label="Random")
+    plt.plot(removed_perc_pr, efficiency_pr, linestyle='-', color='red', label="PageRank")
+    plt.xlabel('Nodes percentage removed')
+    plt.ylabel('WCC efficiency')
+    plt.legend()
+    plt.show()
+
+def communityAnalysis(graph):
+    communities = nx.algorithms.community.greedy_modularity_communities(graph, weight="weight")
+    partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(communities)}
+    print(partition_sizes)
+    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center')
+    plt.xticks(range(len(partition_sizes)), list(partition_sizes.keys()))
+    plt.xlabel('Partition')
+    plt.ylabel('Nodes percentage per communities')
+    plt.show()
+    #label_prop = community.asyn_lpa_communities(graph, weight="weight")
+    #print(label_prop)
 
 def main():
     graph = createGraph()
-    initialStats(graph)
+    #initialStats(graph)
     #inDegreeDistribution(graph)
     #outDegreeDistribution(graph)
     #inStrengthDistribution(graph)
@@ -317,5 +373,8 @@ def main():
     #nodesPercentageIncomingLink(graph)
     #shortestPathAnalysisScc(graph)
     #shortestPathAnalysisWcc(graph)
+    #robustnessAttackLargestWcc(graph)
+    #robustnessAttackEfficiency(graph)
+    communityAnalysis(graph)
 
 main()
