@@ -347,7 +347,7 @@ def robustnessAttackEfficiency(graph):
     plt.legend()
     plt.show()
 
-def communityAnalysis(graph):
+def communityAnalysisGreedy(graph):
     communities = nx.algorithms.community.greedy_modularity_communities(graph, weight="weight")
     partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(communities)}
     print(partition_sizes)
@@ -356,8 +356,152 @@ def communityAnalysis(graph):
     plt.xlabel('Partition')
     plt.ylabel('Nodes percentage per communities')
     plt.show()
-    #label_prop = community.asyn_lpa_communities(graph, weight="weight")
-    #print(label_prop)
+
+def communityAnalysisLouvain(graph):
+    louvain_communities = community.louvain_communities(graph, weight="weight")
+    partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(louvain_communities)}
+    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center')
+    plt.xticks(range(len(partition_sizes)), list(partition_sizes.keys()))
+    plt.xlabel('Partition')
+    plt.ylabel('Nodes percentage per communities')
+    plt.show()
+
+def communityAnalysisGirvanNewman(graph):
+    gn_communities = community.girvan_newman(graph)
+    partition_tmp = [sorted(c) for c in next(gn_communities)]
+    print(partition_tmp)
+    '''
+    partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(louvain_communities)}
+    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center')
+    plt.xticks(range(len(partition_sizes)), list(partition_sizes.keys()))
+    plt.xlabel('Partition')
+    plt.ylabel('Nodes percentage per communities')
+    plt.show()
+    '''
+
+def betweennessCentrality(graph):
+    centrality = nx.betweenness_centrality(graph)
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('Betweenness Centrality')
+    plt.show()
+
+#rifare in Gephi
+def inClosenessCentrality(graph):
+    centrality = nx.closeness_centrality(graph)
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+   
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('In-Closeness Centrality')
+    plt.show()
+
+def outClosenessCentrality(graph):
+    centrality = nx.closeness_centrality(graph.reverse())
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+   
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('Out-Closeness Centrality')
+    plt.show()
+
+# anche qua diverso da gephi
+def pageRankCentrality(graph):
+    centrality = nx.pagerank(graph, weight="weight")
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+    
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('PageRank Centrality')
+    plt.show()
+
+def hubScore(graph):
+    centrality = nx.hits(graph, normalized=True, tol=1e-08)[0]
+
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('Hub Score')
+    plt.show()
+
+def authScore(graph):
+    centrality = nx.hits(graph, normalized=True, tol=1e-08)[1]
+
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('Authority Score')
+    plt.show()
+
+def inDegreeCentrality(graph):
+    centrality = dict(graph.in_degree())
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('In-Degree Score')
+    plt.show()
+
+def inStrengthCentrality(graph):
+    centrality = dict(graph.in_degree(weight="weight"))
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('In-Strength Score')
+    plt.show()
+
+def outDegreeCentrality(graph):
+    centrality = dict(graph.out_degree())
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('Out-Degree Score')
+    plt.show()
+
+def outStrengthCentrality(graph):
+    centrality = dict(graph.out_degree(weight="weight"))
+    top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
+
+    x = [node for node in top_nodes]
+    y = [centrality[node] for node in top_nodes]
+
+    plt.bar(x, y)
+    plt.xlabel('Node')
+    plt.ylabel('Out-Strength Score')
+    plt.show()
 
 def main():
     graph = createGraph()
@@ -375,6 +519,15 @@ def main():
     #shortestPathAnalysisWcc(graph)
     #robustnessAttackLargestWcc(graph)
     #robustnessAttackEfficiency(graph)
-    communityAnalysis(graph)
-
+    #communityAnalysisGreedy(graph)
+    #communityAnalysisLouvain(graph)
+    #communityAnalysisGirvanNewman(graph)
+    #betweennessCentrality(graph)
+    #inClosenessCentrality(graph)
+    #outClosenessCentrality(graph)
+    #pageRankCentrality(graph)
+    #hubScore(graph)
+    #authScore(graph)
+    #inDegreeCentrality(graph)
+    inStrengthCentrality(graph)
 main()
