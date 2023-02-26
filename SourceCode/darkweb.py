@@ -268,12 +268,23 @@ def robustnessAttackLargestWcc(graph):
     removed_perc_random = []
     sizes_pr = []
     removed_perc_pr = []
+    sizes_hub = []
+    removed_perc_hub = []
+    sizes_out_degree = []
+    removed_perc_out_degree = []
     G_attack_wcc = graph.copy()
 
     pr_wcc = nx.pagerank(G_attack_wcc, weight='weight')
+    hubs_wcc = nx.hits(G_attack_wcc, normalized=True, tol=1e-08)[0]
 
+    #print(out_degree_wcc)
     sorted_nodes_pr = sorted(pr_wcc.items(), key=lambda x: x[1], reverse=True)
+    sorted_nodes_hubs = sorted(hubs_wcc.keys(), key=lambda x: hubs_wcc[x], reverse=True)
+    sorted_nodes_out_degree = sorted(graph.out_degree(), key=lambda x: x[1], reverse=True)
+    #print(top_nodes_out_degree)
     top_nodes_pr = [x[0] for x in sorted_nodes_pr]
+    top_nodes_hubs = [node for node in sorted_nodes_hubs]
+    top_nodes_out_degree = [x[0] for x in sorted_nodes_out_degree]
 
     for i in range(0, (initial_size_wcc // 2)):      
         node_to_remove = np.random.choice(G_attack_wcc.nodes, size=1, replace=False)  
@@ -291,9 +302,27 @@ def robustnessAttackLargestWcc(graph):
         #print(str(size) + " " + str(nx.number_weakly_connected_components(G_attack_wcc)))
         sizes_pr.append(size / initial_size_wcc * 100)
         removed_perc_pr.append(i / initial_size_wcc * 100)
+
+    G_attack_wcc = graph.copy()
+    for i in range(0, (initial_size_wcc // 2)):        
+        G_attack_wcc.remove_node(top_nodes_hubs[i])
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        #print(str(size) + " " + str(nx.number_weakly_connected_components(G_attack_wcc)))
+        sizes_hub.append(size / initial_size_wcc * 100)
+        removed_perc_hub.append(i / initial_size_wcc * 100)
     
+    G_attack_wcc = graph.copy()
+    for i in range(0, (initial_size_wcc // 2)):        
+        G_attack_wcc.remove_node(top_nodes_out_degree[i])
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        #print(str(size) + " " + str(nx.number_weakly_connected_components(G_attack_wcc)))
+        sizes_out_degree.append(size / initial_size_wcc * 100)
+        removed_perc_out_degree.append(i / initial_size_wcc * 100)
+
     plt.plot(removed_perc_random, sizes_random, linestyle='-', color='blue', label="Random")
     plt.plot(removed_perc_pr, sizes_pr, linestyle='-', color='red', label="PageRank")
+    plt.plot(removed_perc_hub, sizes_hub, linestyle='-', color='orange', label="Hubs")
+    plt.plot(removed_perc_out_degree, sizes_out_degree, linestyle='-', color='yellow', label="Out-Degree")
     plt.xlabel('Nodes percentage removed')
     plt.ylabel('Largest WCC dimension')
     plt.legend()
@@ -424,6 +453,8 @@ def pageRankCentrality(graph):
     x = [node for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
+    for node in top_nodes:
+        print(node + " " + str(centrality[node]))
     plt.bar(x, y)
     plt.xlabel('Node')
     plt.ylabel('PageRank Centrality')
@@ -503,6 +534,45 @@ def outStrengthCentrality(graph):
     plt.ylabel('Out-Strength Score')
     plt.show()
 
+def linkPredictionJaccard(graph):
+    undirected_graph = graph.to_undirected()
+    similarity = list(nx.algorithms.link_prediction.jaccard_coefficient(undirected_graph))
+    sorted_similarity = sorted(similarity, key=lambda x: x[2], reverse=True)
+
+    x_labels = [f"({u}, {v})" for u, v, p in sorted_similarity[:5]]
+    y_values = [p for u, v, p in sorted_similarity[:5]]
+
+    plt.bar(x_labels, y_values)
+    plt.ylabel("Similarity")
+    plt.title("Top 5 link prediction results")
+    plt.show()
+
+def linkPredictionPreferentialAttachment(graph):
+    undirected_graph = graph.to_undirected()
+    similarity = list(nx.algorithms.link_prediction.preferential_attachment(undirected_graph))
+    sorted_similarity = sorted(similarity, key=lambda x: x[2], reverse=True)
+
+    x_labels = [f"({u}, {v})" for u, v, p in sorted_similarity[:5]]
+    y_values = [p for u, v, p in sorted_similarity[:5]]
+
+    plt.bar(x_labels, y_values)
+    plt.ylabel("Similarity")
+    plt.title("Top 5 link prediction results")
+    plt.show()
+
+def linkPredictionResourceAllocationIndex(graph):
+    undirected_graph = graph.to_undirected()
+    similarity = list(nx.algorithms.link_prediction.resource_allocation_index(undirected_graph))
+    sorted_similarity = sorted(similarity, key=lambda x: x[2], reverse=True)
+
+    x_labels = [f"({u}, {v})" for u, v, p in sorted_similarity[:5]]
+    y_values = [p for u, v, p in sorted_similarity[:5]]
+
+    plt.bar(x_labels, y_values)
+    plt.ylabel("Similarity")
+    plt.title("Top 5 link prediction results")
+    plt.show()
+
 def main():
     graph = createGraph()
     #initialStats(graph)
@@ -529,5 +599,8 @@ def main():
     #hubScore(graph)
     #authScore(graph)
     #inDegreeCentrality(graph)
-    inStrengthCentrality(graph)
+    #inStrengthCentrality(graph)
+    #linkPredictionJaccard(graph)
+    #linkPredictionPreferentialAttachment(graph)
+    linkPredictionResourceAllocationIndex(graph)
 main()
