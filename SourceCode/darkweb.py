@@ -152,7 +152,7 @@ def nodesInDegreePercentage(graph):
     deg, cnt = zip(*degreeCount.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
     plt.plot(deg, cnt)
-    plt.yscale("log")
+    #plt.yscale("log")
     plt.xlim([0, 20])
     plt.ylim([0.01, 100])
     plt.title('In-Degree and nodes percentage')
@@ -445,7 +445,7 @@ def outClosenessCentrality(graph):
     plt.ylabel('Out-Closeness Centrality')
     plt.show()
 
-# anche qua diverso da gephi
+# networkx diverso da gephi e paper
 def pageRankCentrality(graph):
     centrality = nx.pagerank(graph, weight="weight")
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
@@ -573,14 +573,27 @@ def linkPredictionResourceAllocationIndex(graph):
     plt.title("Top 5 link prediction results")
     plt.show()
 
+def linkPredictionCommonNeighbours(graph):
+    undirected_graph = graph.to_undirected()
+    similarity = list(nx.algorithms.link_prediction.common_neighbor_centrality(undirected_graph))  
+    sorted_similarity = sorted(similarity, key=lambda x: x[2], reverse=True)
+
+    x_labels = [f"({u}, {v})" for u, v, p in sorted_similarity[:5]]
+    y_values = [p for u, v, p in sorted_similarity[:5]]
+
+    plt.bar(x_labels, y_values)
+    plt.ylabel("Similarity")
+    plt.title("Top 5 link prediction results")
+    plt.show()
+
 def main():
     graph = createGraph()
     #initialStats(graph)
-    #inDegreeDistribution(graph)
+    inDegreeDistribution(graph)
     #outDegreeDistribution(graph)
     #inStrengthDistribution(graph)
     #outStrengthDistribution(graph)
-    #nodesInDegreePercentage(graph)
+    nodesInDegreePercentage(graph)
     #nodesInStrengthPercentage(graph)
     #nodesOutDegreePercentage(graph)
     #nodesOutStrengthPercentage(graph)
@@ -602,5 +615,8 @@ def main():
     #inStrengthCentrality(graph)
     #linkPredictionJaccard(graph)
     #linkPredictionPreferentialAttachment(graph)
-    linkPredictionResourceAllocationIndex(graph)
+    #linkPredictionResourceAllocationIndex(graph)
+    #linkPredictionCommonNeighbours(graph)
+
+
 main()
