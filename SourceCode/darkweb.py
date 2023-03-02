@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import random
 from collections import Counter
 from networkx.algorithms import community
+import powerlaw
+import math
 
 def createGraph():
     with open('C:/Users/nicol/Documents/GitHub/DarkWeb/Dataset/darkweb.csv', 'r') as csvfile:
@@ -445,7 +447,6 @@ def outClosenessCentrality(graph):
     plt.ylabel('Out-Closeness Centrality')
     plt.show()
 
-# networkx diverso da gephi e paper
 def pageRankCentrality(graph):
     centrality = nx.pagerank(graph, weight="weight")
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
@@ -453,8 +454,6 @@ def pageRankCentrality(graph):
     x = [node for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    for node in top_nodes:
-        print(node + " " + str(centrality[node]))
     plt.bar(x, y)
     plt.xlabel('Node')
     plt.ylabel('PageRank Centrality')
@@ -586,14 +585,61 @@ def linkPredictionCommonNeighbours(graph):
     plt.title("Top 5 link prediction results")
     plt.show()
 
+def inverse_community_mapping(partition):
+    partition_mapping = {}
+    internal_degrees = {}
+    for c in range(min(partition.values()),max(partition.values()) + 1):
+        partition_mapping[c] = [k for k, v in partition.items() if v == c]
+        internal_degrees[c] = 0
+
+    return partition_mapping, internal_degrees
+
+def kshell(graph):
+    core_number = nx.algorithms.core.core_number(graph)
+    ks, _ = inverse_community_mapping(core_number)
+    print(ks.keys())
+    figure, axes = plt.subplots()
+    r = 100
+    points = {}
+    for key, value in ks.items():
+        delta = 2*math.pi/len(value)
+        for i, j in enumerate(value):
+            points[j] = (r * math.cos(i * delta), r * math.sin(i * delta))
+        #plt.plot(dict(points).keys(), dict(points).values())
+        circle = plt.Circle((0, 0), r, color="red", fill=False)
+        axes.add_artist(circle)
+        r -= 5
+    #disegnare dopo i nodi
+    nx.draw(graph, pos=points, with_labels=False, node_size=10, edge_color = "#ccc")
+
+    # Disegna cerchi concentrici con colori alternati
+    
+    #radii = range(1, 29)
+    #colors = ['red', 'yellow'] * 14
+    #for radius, color in zip(radii, colors):
+
+    axes.set_xlim((-100, 100))
+    axes.set_ylim((-100, 100))
+
+    # Nascondi gli assi
+    axes.set_xticks([])
+    axes.set_yticks([])
+    # Imposta i limiti degli assi
+    # Mostra il grafico
+    plt.show()
+    '''
+    plt.show()
+    '''
+   
+
 def main():
     graph = createGraph()
     #initialStats(graph)
-    inDegreeDistribution(graph)
+    #inDegreeDistribution(graph)
     #outDegreeDistribution(graph)
     #inStrengthDistribution(graph)
     #outStrengthDistribution(graph)
-    nodesInDegreePercentage(graph)
+    #nodesInDegreePercentage(graph)
     #nodesInStrengthPercentage(graph)
     #nodesOutDegreePercentage(graph)
     #nodesOutStrengthPercentage(graph)
@@ -617,6 +663,7 @@ def main():
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)
     #linkPredictionCommonNeighbours(graph)
+    kshell(graph)
 
 
 main()
