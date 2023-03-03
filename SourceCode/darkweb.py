@@ -658,12 +658,14 @@ def main():
     #hubScore(graph)
     #authScore(graph)
     #inDegreeCentrality(graph)
+    #outDegreeCentrality(graph)
     #inStrengthCentrality(graph)
+    #outStrengthCentrality(graph)
     #linkPredictionJaccard(graph)
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)
     #linkPredictionCommonNeighbours(graph)
-    kshell(graph)
+    #kshell(graph)
 
 
 main()
