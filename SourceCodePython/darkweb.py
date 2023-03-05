@@ -595,9 +595,19 @@ def inverse_community_mapping(partition):
     return partition_mapping, internal_degrees
 
 def kshell(graph):
+    colors = [
+    "red", "blue", "green", "purple", "orange", "brown", "black", "gray", "navy", 
+    "teal", "magenta", "maroon", "olive", "pink", "gold", "silver", "cyan", 
+    "indigo", "lime", "orchid", "peru", "plum", "salmon", "sienna", "skyblue", 
+    "tan", "thistle", "turquoise"
+    ]
+    
     core_number = nx.algorithms.core.core_number(graph)
     ks, _ = inverse_community_mapping(core_number)
     print(ks.keys())
+    color_map = {}
+    for i, (key, value) in enumerate(ks.items()):
+        color_map.update(dict.fromkeys(value, colors[i]))
     figure, axes = plt.subplots()
     r = 100
     points = {}
@@ -605,31 +615,23 @@ def kshell(graph):
         delta = 2*math.pi/len(value)
         for i, j in enumerate(value):
             points[j] = (r * math.cos(i * delta), r * math.sin(i * delta))
-        #plt.plot(dict(points).keys(), dict(points).values())
+        r -= 5
+    nx.draw(graph, pos=points, with_labels=False, node_size=10, edge_color="#ccc", node_color=[color_map[node] for node in graph.nodes()])
+
+    r = 100
+    for key, value in ks.items():
+        delta = 2*math.pi/len(value)
+        for i, j in enumerate(value):
+            points[j] = (r * math.cos(i * delta), r * math.sin(i * delta))
         circle = plt.Circle((0, 0), r, color="red", fill=False)
         axes.add_artist(circle)
         r -= 5
-    #disegnare dopo i nodi
-    nx.draw(graph, pos=points, with_labels=False, node_size=10, edge_color = "#ccc")
-
-    # Disegna cerchi concentrici con colori alternati
-    
-    #radii = range(1, 29)
-    #colors = ['red', 'yellow'] * 14
-    #for radius, color in zip(radii, colors):
 
     axes.set_xlim((-100, 100))
     axes.set_ylim((-100, 100))
-
-    # Nascondi gli assi
     axes.set_xticks([])
     axes.set_yticks([])
-    # Imposta i limiti degli assi
-    # Mostra il grafico
     plt.show()
-    '''
-    plt.show()
-    '''
    
 
 def main():
@@ -649,7 +651,7 @@ def main():
     #robustnessAttackLargestWcc(graph)
     #robustnessAttackEfficiency(graph)
     #communityAnalysisGreedy(graph)
-    #communityAnalysisLouvain(graph)
+    #communityAnalysisLouvain(graph)            --togliere
     #communityAnalysisGirvanNewman(graph)
     #betweennessCentrality(graph)
     #inClosenessCentrality(graph)
@@ -665,7 +667,7 @@ def main():
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)
     #linkPredictionCommonNeighbours(graph)
-    #kshell(graph)
+    kshell(graph)
 
 
 main()
