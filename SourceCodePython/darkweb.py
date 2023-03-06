@@ -667,7 +667,7 @@ def main():
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)
     #linkPredictionCommonNeighbours(graph)
-    kshell(graph)
+    #kshell(graph)
 
 
 main()
