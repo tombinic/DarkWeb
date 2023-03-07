@@ -88,13 +88,13 @@ def inDegreeDistribution(graph):
     plt.title("In-Degree distribution")
     plt.xlabel("k")
     plt.ylabel("Pin(k)")
-    plt.plot(deg, cnt)
+    plt.plot(deg, cnt, color='red', linestyle='solid')
     plt.show()
     plt.title("In-Degree cumulated distribution")
     cs = np.cumsum(cnt)
     plt.xlabel("k")
     plt.ylabel(r'$\bar{P}$' + "(k)",fontsize=12)
-    plt.plot(deg, cs)
+    plt.plot(deg, cs, color='blue', linestyle='solid')
     plt.show()
 
 def outDegreeDistribution(graph):
@@ -105,13 +105,13 @@ def outDegreeDistribution(graph):
     plt.title("Out-Degree distribution")
     plt.xlabel("k")
     plt.ylabel("Pout(k)")
-    plt.plot(deg, cnt)
+    plt.plot(deg, cnt, color='red', linestyle='solid')
     plt.show()
     plt.title("Out-Degree cumulated distribution")
     cs = np.cumsum(cnt)
     plt.xlabel("k")
     plt.ylabel(r'$\bar{P}$' + "(k)",fontsize=12)
-    plt.plot(deg, cs)
+    plt.plot(deg, cs, color='blue', linestyle='solid')
     plt.show()
 
 def inStrengthDistribution(graph):
@@ -486,14 +486,16 @@ def authScore(graph):
     plt.show()
 
 def inDegreeCentrality(graph):
+    reds = np.linspace(1, 0, 5)  # genera 5 valori da 1 a 0 in scala inversa
+    colors = [(red, 0, 0) for red in reds] 
     centrality = dict(graph.in_degree())
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
-    plt.xlabel('Node')
+    plt.bar(x, y, color=colors)
+    plt.xlabel('Nodes')
     plt.ylabel('In-Degree Score')
     plt.show()
 
@@ -636,9 +638,9 @@ def kshell(graph):
 
 def main():
     graph = createGraph()
-    #initialStats(graph)
-    #inDegreeDistribution(graph)
-    #outDegreeDistribution(graph)
+    #initialStats(graph)                -- done
+    #inDegreeDistribution(graph)        -- done
+    outDegreeDistribution(graph)
     #inStrengthDistribution(graph)
     #outStrengthDistribution(graph)
     #nodesInDegreePercentage(graph)
@@ -651,7 +653,6 @@ def main():
     #robustnessAttackLargestWcc(graph)
     #robustnessAttackEfficiency(graph)
     #communityAnalysisGreedy(graph)
-    #communityAnalysisLouvain(graph)            --togliere
     #communityAnalysisGirvanNewman(graph)
     #betweennessCentrality(graph)
     #inClosenessCentrality(graph)
@@ -659,7 +660,7 @@ def main():
     #pageRankCentrality(graph)
     #hubScore(graph)
     #authScore(graph)
-    #inDegreeCentrality(graph)
+    #inDegreeCentrality(graph)             --done
     #outDegreeCentrality(graph)
     #inStrengthCentrality(graph)
     #outStrengthCentrality(graph)
