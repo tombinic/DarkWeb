@@ -81,7 +81,7 @@ def initialStats(graph):
     print("Average shortest path length in SCC: " + str(avg_path_scc))      
 
 def inDegreeDistribution(graph):
-    degree_sequence = sorted([d for n, d in graph.in_degree()], reverse=True)
+    degree_sequence = sorted([d for n, d in graph.degree()], reverse=True)
     degreeCount = Counter(degree_sequence)
     deg, cnt = zip(*degreeCount.items())
     cnt = tuple(i/graph.number_of_nodes() for i in cnt)
@@ -122,7 +122,7 @@ def inStrengthDistribution(graph):
     plt.title("In-Strength distribution")
     plt.xlabel("s")
     plt.ylabel("Pin(s)")
-    plt.plot(deg, cnt)
+    plt.plot(deg, cnt, color="red")
     plt.show()
     plt.title("In-Strength cumulated distribution")
     cs = np.cumsum(cnt)
@@ -139,7 +139,7 @@ def outStrengthDistribution(graph):
     plt.title("Out-Strength distribution")
     plt.xlabel("s")
     plt.ylabel("Pout(s)")
-    plt.plot(deg, cnt)
+    plt.plot(deg, cnt, color="red")
     plt.show()
     plt.title("Out-Strength cumulated distribution")
     cs = np.cumsum(cnt)
@@ -153,8 +153,7 @@ def nodesInDegreePercentage(graph):
     degreeCount = Counter(degree_sequence)
     deg, cnt = zip(*degreeCount.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
-    plt.plot(deg, cnt)
-    #plt.yscale("log")
+    plt.plot(deg, cnt, color="purple")
     plt.xlim([0, 20])
     plt.ylim([0.01, 100])
     plt.title('In-Degree and nodes percentage')
@@ -167,8 +166,7 @@ def nodesInStrengthPercentage(graph):
     degreeCount = Counter(degree_sequence)
     deg, cnt = zip(*degreeCount.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
-    plt.plot(deg, cnt)
-    plt.yscale("log")
+    plt.plot(deg, cnt, color="purple")
     plt.xlim([0, 20])
     plt.ylim([0.01, 100])
     plt.title('In-Strength and nodes percentage')
@@ -181,8 +179,7 @@ def nodesOutStrengthPercentage(graph):
     degreeCount = Counter(degree_sequence)
     deg, cnt = zip(*degreeCount.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
-    plt.plot(deg, cnt)
-    plt.yscale("log")
+    plt.plot(deg, cnt, color="purple")
     plt.xlim([0, 20])
     plt.ylim([0.01, 100])
     plt.title('Out-Strength and nodes percentage')
@@ -195,8 +192,8 @@ def nodesOutDegreePercentage(graph):
     degreeCount = Counter(degree_sequence)
     deg, cnt = zip(*degreeCount.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
-    plt.plot(deg, cnt)
-    plt.yscale("log")
+    plt.plot(deg, cnt, color="purple")
+    #plt.yscale("log")
     plt.xlim([0, 20])
     plt.ylim([0.01, 100])
     plt.title('Out-Degree and nodes percentage')
@@ -486,7 +483,7 @@ def authScore(graph):
     plt.show()
 
 def inDegreeCentrality(graph):
-    reds = np.linspace(1, 0, 5)  # genera 5 valori da 1 a 0 in scala inversa
+    reds = np.linspace(1, 0, 5) 
     colors = [(red, 0, 0) for red in reds] 
     centrality = dict(graph.in_degree())
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
@@ -500,37 +497,43 @@ def inDegreeCentrality(graph):
     plt.show()
 
 def inStrengthCentrality(graph):
+    n = 5
+    colors = [(purple, 0, purple) for purple in np.linspace(1, 0, n)]
     centrality = dict(graph.in_degree(weight="weight"))
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('In-Strength Score')
     plt.show()
 
 def outDegreeCentrality(graph):
+    n = 5
+    colors = [(0, 0, blue) for blue in np.linspace(1, 0, n)]
     centrality = dict(graph.out_degree())
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('Out-Degree Score')
     plt.show()
 
 def outStrengthCentrality(graph):
+    n = 5
+    colors = [(0, gray, gray) for gray in np.linspace(1, 0, n)]
     centrality = dict(graph.out_degree(weight="weight"))
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('Out-Strength Score')
     plt.show()
@@ -640,14 +643,14 @@ def main():
     graph = createGraph()
     #initialStats(graph)                -- done
     #inDegreeDistribution(graph)        -- done
-    outDegreeDistribution(graph)
-    #inStrengthDistribution(graph)
-    #outStrengthDistribution(graph)
-    #nodesInDegreePercentage(graph)
-    #nodesInStrengthPercentage(graph)
-    #nodesOutDegreePercentage(graph)
-    #nodesOutStrengthPercentage(graph)
-    #nodesPercentageIncomingLink(graph)
+    #outDegreeDistribution(graph)       -- done
+    #inStrengthDistribution(graph)      -- done
+    #outStrengthDistribution(graph)     -- done
+    #nodesInDegreePercentage(graph)     -- done
+    #nodesInStrengthPercentage(graph)   -- done
+    #nodesOutDegreePercentage(graph)    -- done
+    #nodesOutStrengthPercentage(graph)  -- done
+    #nodesPercentageIncomingLink(graph) 
     #shortestPathAnalysisScc(graph)
     #shortestPathAnalysisWcc(graph)
     #robustnessAttackLargestWcc(graph)
@@ -660,10 +663,10 @@ def main():
     #pageRankCentrality(graph)
     #hubScore(graph)
     #authScore(graph)
-    #inDegreeCentrality(graph)             --done
-    #outDegreeCentrality(graph)
-    #inStrengthCentrality(graph)
-    #outStrengthCentrality(graph)
+    #inDegreeCentrality(graph)             -- done
+    #outDegreeCentrality(graph)            -- done
+    #inStrengthCentrality(graph)           -- done
+    outStrengthCentrality(graph)
     #linkPredictionJaccard(graph)
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)

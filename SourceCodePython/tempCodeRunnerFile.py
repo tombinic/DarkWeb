@@ -1,1 +1,1 @@
-yellow
+nodesInStrengthPercentage
