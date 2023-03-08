@@ -1,1 +1,1 @@
-nodesInStrengthPercentage
+linspace

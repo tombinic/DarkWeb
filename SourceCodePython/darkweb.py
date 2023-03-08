@@ -30,6 +30,16 @@ def authAndHubs(graph):
         for node, hubs in sorted(hubs.items(), key=lambda x: x[1], reverse=True):
             writer.writerow({'Id': node, 'Hubs': hubs, 'Auth': authorities[node]})
 
+def inoutCloseness(graph):
+    in_closeness = nx.closeness_centrality(graph)
+    out_closeness = nx.closeness_centrality(graph.reverse())
+
+    with open('C:/Users/nicol/Desktop/closeness.csv', mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(['Node ID', 'In-Closeness Centrality', 'Out-Closeness Centrality'])
+        for node_id in graph.nodes():
+            writer.writerow([node_id, in_closeness[node_id], out_closeness[node_id]])
+
 def initialStats(graph):
     n = graph.number_of_nodes()
     efficiency = 0.0
@@ -202,7 +212,6 @@ def nodesOutDegreePercentage(graph):
     plt.show()
 
 def nodesPercentageIncomingLink(graph):
-# nodes percentage which have the in link coming from the most 5 out degree nodes
     nodes_with_one_in_link = [n for n in graph.nodes() if graph.in_degree(n) == 1]
     outdegree = dict(graph.out_degree())
     top_nodes = sorted(outdegree, key=outdegree.get, reverse=True)[:5]
@@ -408,76 +417,89 @@ def communityAnalysisGirvanNewman(graph):
     '''
 
 def betweennessCentrality(graph):
+    greens = np.linspace(1, 0, 5)
+    colors = [(0, green, 0) for green in greens]
     centrality = nx.betweenness_centrality(graph)
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('Betweenness Centrality')
     plt.show()
 
-#rifare in Gephi
 def inClosenessCentrality(graph):
+    yellows = np.linspace(1, 0, 5)
+    colors = [(yellow, yellow, 0) for yellow in yellows]
     centrality = nx.closeness_centrality(graph)
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
    
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('In-Closeness Centrality')
     plt.show()
 
 def outClosenessCentrality(graph):
+    pinks = np.linspace(1, 0, 5)
+    colors = [(pink, 0.5*pink, 0.5*pink) for pink in pinks]
     centrality = nx.closeness_centrality(graph.reverse())
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
    
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('Out-Closeness Centrality')
     plt.show()
 
 def pageRankCentrality(graph):
+    blues = np.linspace(1, 0, 5)
+    colors = [(0, 0, blue) for blue in blues]
     centrality = nx.pagerank(graph, weight="weight")
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
     
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
     plt.xlabel('Node')
     plt.ylabel('PageRank Centrality')
     plt.show()
 
 def hubScore(graph):
+    mixed = np.linspace(0, 1, 5)
+    colors = [(0, green, blue) for green, blue in zip(mixed, reversed(mixed))]
     centrality = nx.hits(graph, normalized=True, tol=1e-08)[0]
 
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
+    plt.yscale("log")
     plt.xlabel('Node')
     plt.ylabel('Hub Score')
     plt.show()
 
 def authScore(graph):
+    oranges = np.linspace(1, 0, 5)
+    colors = [(orange, orange/2, 0) for orange in oranges]
     centrality = nx.hits(graph, normalized=True, tol=1e-08)[1]
 
     top_nodes = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:5]
 
-    x = [node for node in top_nodes]
+    x = [node[:8] + '...' for node in top_nodes]
     y = [centrality[node] for node in top_nodes]
 
-    plt.bar(x, y)
+    plt.bar(x, y, color=colors)
+    plt.yscale("log")
     plt.xlabel('Node')
     plt.ylabel('Authority Score')
     plt.show()
@@ -641,6 +663,7 @@ def kshell(graph):
 
 def main():
     graph = createGraph()
+    inoutCloseness(graph)
     #initialStats(graph)                -- done
     #inDegreeDistribution(graph)        -- done
     #outDegreeDistribution(graph)       -- done
@@ -650,23 +673,23 @@ def main():
     #nodesInStrengthPercentage(graph)   -- done
     #nodesOutDegreePercentage(graph)    -- done
     #nodesOutStrengthPercentage(graph)  -- done
-    #nodesPercentageIncomingLink(graph) 
+    #nodesPercentageIncomingLink(graph) -- done
     #shortestPathAnalysisScc(graph)
     #shortestPathAnalysisWcc(graph)
     #robustnessAttackLargestWcc(graph)
     #robustnessAttackEfficiency(graph)
     #communityAnalysisGreedy(graph)
     #communityAnalysisGirvanNewman(graph)
-    #betweennessCentrality(graph)
-    #inClosenessCentrality(graph)
-    #outClosenessCentrality(graph)
-    #pageRankCentrality(graph)
-    #hubScore(graph)
-    #authScore(graph)
+    #betweennessCentrality(graph)       -- done
+    #inClosenessCentrality(graph)       -- done
+    #outClosenessCentrality(graph)      -- done
+    #pageRankCentrality(graph)          -- done
+    #hubScore(graph)                    -- done
+    #authScore(graph)                   -- done
     #inDegreeCentrality(graph)             -- done
     #outDegreeCentrality(graph)            -- done
     #inStrengthCentrality(graph)           -- done
-    outStrengthCentrality(graph)
+    #outStrengthCentrality(graph)          -- done
     #linkPredictionJaccard(graph)
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)
