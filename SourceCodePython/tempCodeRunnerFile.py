@@ -1,1 +1,1 @@
-linspace
+communityAnalysisGirvanNewman

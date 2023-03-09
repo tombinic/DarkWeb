@@ -12,9 +12,4 @@ num_edges = numedges(G);
 
 A = adjacency(G);
 
-%[coreness, kn] = kcoreness_centrality_bu(A)
-%histogram(coreness)
-%p = plot(G, 'NodeColor', 'g', 'MarkerSize', max(normalize(coreness)));
-%p.NodeCData = coreness;
-
 save('A_darkweb.mat', 'A');

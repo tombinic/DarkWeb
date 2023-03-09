@@ -385,36 +385,16 @@ def robustnessAttackEfficiency(graph):
     plt.show()
 
 def communityAnalysisGreedy(graph):
-    communities = nx.algorithms.community.greedy_modularity_communities(graph, weight="weight")
+    greens = np.linspace(1, 0, 5)
+    colors = [(0, green, 0) for green in greens]
+    communities = nx.algorithms.community.greedy_modularity_communities(graph, weight="weight",resolution=1)
     partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(communities)}
-    print(partition_sizes)
-    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center')
+    print(nx.algorithms.community.modularity(graph, communities, weight="weight", resolution=1))
+    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center', color=colors)
     plt.xticks(range(len(partition_sizes)), list(partition_sizes.keys()))
     plt.xlabel('Partition')
     plt.ylabel('Nodes percentage per communities')
     plt.show()
-
-def communityAnalysisLouvain(graph):
-    louvain_communities = community.louvain_communities(graph, weight="weight")
-    partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(louvain_communities)}
-    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center')
-    plt.xticks(range(len(partition_sizes)), list(partition_sizes.keys()))
-    plt.xlabel('Partition')
-    plt.ylabel('Nodes percentage per communities')
-    plt.show()
-
-def communityAnalysisGirvanNewman(graph):
-    gn_communities = community.girvan_newman(graph)
-    partition_tmp = [sorted(c) for c in next(gn_communities)]
-    print(partition_tmp)
-    '''
-    partition_sizes = {i: len(c) / len(graph.nodes) * 100 for i, c in enumerate(louvain_communities)}
-    plt.bar(range(len(partition_sizes)), list(partition_sizes.values()), align='center')
-    plt.xticks(range(len(partition_sizes)), list(partition_sizes.keys()))
-    plt.xlabel('Partition')
-    plt.ylabel('Nodes percentage per communities')
-    plt.show()
-    '''
 
 def betweennessCentrality(graph):
     greens = np.linspace(1, 0, 5)
@@ -663,7 +643,6 @@ def kshell(graph):
 
 def main():
     graph = createGraph()
-    inoutCloseness(graph)
     #initialStats(graph)                -- done
     #inDegreeDistribution(graph)        -- done
     #outDegreeDistribution(graph)       -- done
@@ -678,8 +657,7 @@ def main():
     #shortestPathAnalysisWcc(graph)
     #robustnessAttackLargestWcc(graph)
     #robustnessAttackEfficiency(graph)
-    #communityAnalysisGreedy(graph)
-    #communityAnalysisGirvanNewman(graph)
+    #communityAnalysisGreedy(graph)     -- done
     #betweennessCentrality(graph)       -- done
     #inClosenessCentrality(graph)       -- done
     #outClosenessCentrality(graph)      -- done
@@ -694,7 +672,7 @@ def main():
     #linkPredictionPreferentialAttachment(graph)
     #linkPredictionResourceAllocationIndex(graph)
     #linkPredictionCommonNeighbours(graph)
-    #kshell(graph)
+    #kshell(graph)                          -- done
 
 
 main()

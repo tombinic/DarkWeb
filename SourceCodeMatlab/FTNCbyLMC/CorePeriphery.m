@@ -45,7 +45,7 @@ scn = get(0,'ScreenSize');
 %-----(see reference above): the datafiles are available in the 
 %-----distribution package 
 
-netname='darkweb_scc';
+netname='darkweb_scc_unweighted';
 % netname='complete100';
 % netname='ER';
 % netname='BA';
