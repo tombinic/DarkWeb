@@ -1,1 +1,1 @@
-communityAnalysisGirvanNewman
+New
