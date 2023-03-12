@@ -45,7 +45,7 @@ scn = get(0,'ScreenSize');
 %-----(see reference above): the datafiles are available in the 
 %-----distribution package 
 
-netname='darkweb_scc_unweighted';
+netname='darkweb_scc';
 % netname='complete100';
 % netname='ER';
 % netname='BA';
@@ -69,7 +69,7 @@ disp(['PROFILING CORE-PERIPHERY'])
 %and (optionally) a Nx1 cell "labels" containing label strings
 load(strcat('A_',netname,'.mat'));
 A=full(A);
-
+disp(A);
 %if labels do not exist in the uploaded file,
 %creates fictitious labels which are simply the node numbers
 if length(find(char(who('*'))=='b'))==0 %labels do not exists in the file uploaded

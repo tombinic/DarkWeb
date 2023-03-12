@@ -12,6 +12,9 @@ G = digraph(edges(:, 1), edges(:, 2), weights);
 num_nodes = numnodes(G);
 num_edges = numedges(G);
 
-A = adjacency(G);
-
-save('A_darkweb_scc_unweighted.mat', 'A');
+%disp(G.Nodes);
+A = adjacency(G, 'weighted');
+for i = 1:num_nodes
+    fprintf('Node name: %s, Node index: %d\n', G.Nodes.Name{i}, i);
+end
+save('A_darkweb_scc.mat', 'A');
