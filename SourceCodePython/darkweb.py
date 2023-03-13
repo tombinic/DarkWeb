@@ -278,19 +278,33 @@ def robustnessAttackLargestWcc(graph):
     removed_perc_pr = []
     sizes_hub = []
     removed_perc_hub = []
+    sizes_auth = []
+    removed_perc_auth = []
     sizes_out_degree = []
     removed_perc_out_degree = []
+    sizes_in_degree = []
+    removed_perc_in_degree = []
+    sizes_bw = []
+    removed_perc_bw = []
     G_attack_wcc = graph.copy()
 
     pr_wcc = nx.pagerank(G_attack_wcc, weight='weight')
     hubs_wcc = nx.hits(G_attack_wcc, normalized=True, tol=1e-08)[0]
+    auth_wcc = nx.hits(G_attack_wcc, normalized=True, tol=1e-08)[1]
+    bw_wcc = nx.betweenness_centrality(G_attack_wcc)
 
+    sorted_nodes_bw = sorted(bw_wcc.keys(), key=lambda x: bw_wcc[x], reverse=True)
     sorted_nodes_pr = sorted(pr_wcc.items(), key=lambda x: x[1], reverse=True)
     sorted_nodes_hubs = sorted(hubs_wcc.keys(), key=lambda x: hubs_wcc[x], reverse=True)
+    sorted_nodes_auth = sorted(auth_wcc.keys(), key=lambda x: auth_wcc[x], reverse=True)
     sorted_nodes_out_degree = sorted(graph.out_degree(), key=lambda x: x[1], reverse=True)
+    sorted_nodes_in_degree = sorted(graph.in_degree(), key=lambda x: x[1], reverse=True)
     top_nodes_pr = [x[0] for x in sorted_nodes_pr]
+    top_nodes_bw = [x for x in sorted_nodes_bw]
     top_nodes_hubs = [node for node in sorted_nodes_hubs]
+    top_nodes_auth = [node for node in sorted_nodes_auth]
     top_nodes_out_degree = [x[0] for x in sorted_nodes_out_degree]
+    top_nodes_in_degree = [x[0] for x in sorted_nodes_in_degree]
 
     for i in range(0, (initial_size_wcc // 2)):      
         node_to_remove = np.random.choice(G_attack_wcc.nodes, size=1, replace=False)  
@@ -308,10 +322,24 @@ def robustnessAttackLargestWcc(graph):
 
     G_attack_wcc = graph.copy()
     for i in range(0, (initial_size_wcc // 2)):        
+        G_attack_wcc.remove_node(top_nodes_bw[i])
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        sizes_bw.append(size / initial_size_wcc * 100)
+        removed_perc_bw.append(i / initial_size_wcc * 100)
+
+    G_attack_wcc = graph.copy()
+    for i in range(0, (initial_size_wcc // 2)):        
         G_attack_wcc.remove_node(top_nodes_hubs[i])
         size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
         sizes_hub.append(size / initial_size_wcc * 100)
         removed_perc_hub.append(i / initial_size_wcc * 100)
+
+    G_attack_wcc = graph.copy()
+    for i in range(0, (initial_size_wcc // 2)):        
+        G_attack_wcc.remove_node(top_nodes_auth[i])
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        sizes_auth.append(size / initial_size_wcc * 100)
+        removed_perc_auth.append(i / initial_size_wcc * 100)
     
     G_attack_wcc = graph.copy()
     for i in range(0, (initial_size_wcc // 2)):        
@@ -320,10 +348,20 @@ def robustnessAttackLargestWcc(graph):
         sizes_out_degree.append(size / initial_size_wcc * 100)
         removed_perc_out_degree.append(i / initial_size_wcc * 100)
 
+    G_attack_wcc = graph.copy()
+    for i in range(0, (initial_size_wcc // 2)):        
+        G_attack_wcc.remove_node(top_nodes_in_degree[i])
+        size = len(max(nx.weakly_connected_components(G_attack_wcc), key=len))
+        sizes_in_degree.append(size / initial_size_wcc * 100)
+        removed_perc_in_degree.append(i / initial_size_wcc * 100)
+
     plt.plot(removed_perc_random, sizes_random, linestyle='-', color='blue', label="Random")
     plt.plot(removed_perc_pr, sizes_pr, linestyle='-', color='red', label="PageRank")
     plt.plot(removed_perc_hub, sizes_hub, linestyle='-', color='orange', label="Hubs")
+    plt.plot(removed_perc_bw, sizes_bw, linestyle='-', color='purple', label="Betweenness Centrality")
     plt.plot(removed_perc_out_degree, sizes_out_degree, linestyle='-', color='yellow', label="Out-Degree")
+    plt.plot(removed_perc_in_degree, sizes_in_degree, linestyle='-', color='pink', label="In-Degree")
+    plt.plot(removed_perc_auth, sizes_auth, linestyle='-', color='brown', label="Authorities")
     plt.xlabel('Nodes percentage removed')
     plt.ylabel('Largest WCC dimension')
     plt.legend()
@@ -644,7 +682,7 @@ def main():
     #nodesPercentageIncomingLink(graph) -- done
     #shortestPathAnalysisScc(graph)     -- done
     #shortestPathAnalysisWcc(graph)     -- done
-    #robustnessAttackLargestWcc(graph)  -- done
+    robustnessAttackLargestWcc(graph)  #-- done
     #robustnessAttackEfficiency(graph)  -- done
     #communityAnalysisGreedy(graph)     -- done
     #betweennessCentrality(graph)       -- done
