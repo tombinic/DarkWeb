@@ -675,14 +675,14 @@ def main():
     #outDegreeDistribution(graph)       -- done
     #inStrengthDistribution(graph)      -- done
     #outStrengthDistribution(graph)     -- done
-    #nodesInDegreePercentage(graph)     -- done
+    nodesInDegreePercentage(graph)     #-- done
     #nodesInStrengthPercentage(graph)   -- done
     #nodesOutDegreePercentage(graph)    -- done
     #nodesOutStrengthPercentage(graph)  -- done
     #nodesPercentageIncomingLink(graph) -- done
     #shortestPathAnalysisScc(graph)     -- done
     #shortestPathAnalysisWcc(graph)     -- done
-    robustnessAttackLargestWcc(graph)  #-- done
+    #robustnessAttackLargestWcc(graph)  -- done
     #robustnessAttackEfficiency(graph)  -- done
     #communityAnalysisGreedy(graph)     -- done
     #betweennessCentrality(graph)       -- done
