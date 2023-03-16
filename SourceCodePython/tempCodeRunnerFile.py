@@ -1,1 +1,0 @@
-G_attack_wcc

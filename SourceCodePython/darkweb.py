@@ -8,7 +8,7 @@ from networkx.algorithms import community
 import powerlaw
 import math
 
-def createGraph():
+def create_graph():
     with open('C:/Users/nicol/Documents/GitHub/DarkWeb/Dataset/darkweb.csv', 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=";")
         edges = []
@@ -20,17 +20,17 @@ def createGraph():
     graph.add_weighted_edges_from(edges)
     return graph
 
-def authAndHubs(graph):
+def auth_and_hubs(graph):
     hubs, authorities = nx.hits(graph, normalized=True, tol=1e-08)
 
     with open('C:/Users/nicol/Desktop/hubs1.csv', 'w', newline='') as csvfile:
-        fieldnames = ['Id', 'Hubs', 'Auth']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        field_names = ['Id', 'Hubs', 'Auth']
+        writer = csv.DictWriter(csvfile, fieldnames=field_names)
         writer.writeheader()
         for node, hubs in sorted(hubs.items(), key=lambda x: x[1], reverse=True):
             writer.writerow({'Id': node, 'Hubs': hubs, 'Auth': authorities[node]})
 
-def inoutCloseness(graph):
+def in_out_closeness(graph):
     in_closeness = nx.closeness_centrality(graph)
     out_closeness = nx.closeness_centrality(graph.reverse())
 
@@ -40,13 +40,14 @@ def inoutCloseness(graph):
         for node_id in graph.nodes():
             writer.writerow([node_id, in_closeness[node_id], out_closeness[node_id]])
 
-def initialStats(graph):
+def initial_stats(graph):
     n = graph.number_of_nodes()
     efficiency = 0.0
     for node in graph:
         sp = nx.shortest_path_length(graph, source=node)
         efficiency += sum(1.0/l for l in sp.values() if l > 0)
     efficiency /= (n*(n-1))
+
     print("Efficiency ", efficiency)
     print("Density " + str(nx.density(graph)))
     print("Assortativity coefficient " + str(nx.degree_assortativity_coefficient(graph, weight="weight")))
@@ -73,7 +74,6 @@ def initialStats(graph):
         successors = graph.successors(node)
         out_component.update(succ for succ in successors if succ not in largest_scc)
 
-
     out_component_new = out_component.copy()
     while(True):
         out_component_new = out_component.copy()
@@ -90,10 +90,10 @@ def initialStats(graph):
     avg_path_scc = nx.average_shortest_path_length(largest_scc)
     print("Average shortest path length in SCC: " + str(avg_path_scc))      
 
-def inDegreeDistribution(graph):
+def in_degree_distribution(graph):
     degree_sequence = sorted([d for n, d in graph.degree()], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple(i/graph.number_of_nodes() for i in cnt)
     plt.title("In-Degree distribution")
     plt.xlabel("k")
@@ -103,14 +103,14 @@ def inDegreeDistribution(graph):
     plt.title("In-Degree cumulated distribution")
     cs = np.cumsum(cnt)
     plt.xlabel("k")
-    plt.ylabel(r'$\bar{P}$' + "(k)",fontsize=12)
+    plt.ylabel(r'$\bar{P}$' + "(k)", fontsize=12)
     plt.plot(deg, cs, color='blue', linestyle='solid')
     plt.show()
 
-def outDegreeDistribution(graph):
+def out_degree_distribution(graph):
     degree_sequence = sorted([d for n, d in graph.out_degree()], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple(i/graph.number_of_nodes() for i in cnt)
     plt.title("Out-Degree distribution")
     plt.xlabel("k")
@@ -120,14 +120,14 @@ def outDegreeDistribution(graph):
     plt.title("Out-Degree cumulated distribution")
     cs = np.cumsum(cnt)
     plt.xlabel("k")
-    plt.ylabel(r'$\bar{P}$' + "(k)",fontsize=12)
+    plt.ylabel(r'$\bar{P}$' + "(k)", fontsize=12)
     plt.plot(deg, cs, color='blue', linestyle='solid')
     plt.show()
 
-def inStrengthDistribution(graph):
+def in_strength_distribution(graph):
     degree_sequence = sorted([d for n, d in graph.in_degree(weight="weight")], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple(i/graph.number_of_nodes() for i in cnt)
     plt.title("In-Strength distribution")
     plt.xlabel("s")
@@ -137,14 +137,14 @@ def inStrengthDistribution(graph):
     plt.title("In-Strength cumulated distribution")
     cs = np.cumsum(cnt)
     plt.xlabel("s")
-    plt.ylabel(r'$\bar{P}$' + "(s)",fontsize=12)
+    plt.ylabel(r'$\bar{P}$' + "(s)", fontsize=12)
     plt.plot(deg, cs)
     plt.show()
 
-def outStrengthDistribution(graph):
+def out_strength_distribution(graph):
     degree_sequence = sorted([d for n, d in graph.out_degree(weight="weight")], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple(i/graph.number_of_nodes() for i in cnt)
     plt.title("Out-Strength distribution")
     plt.xlabel("s")
@@ -154,14 +154,14 @@ def outStrengthDistribution(graph):
     plt.title("Out-Strength cumulated distribution")
     cs = np.cumsum(cnt)
     plt.xlabel("s")
-    plt.ylabel(r'$\bar{P}$' + "(s)",fontsize=12)
+    plt.ylabel(r'$\bar{P}$' + "(s)", fontsize=12)
     plt.plot(deg, cs)
     plt.show()
 
-def nodesInDegreePercentage(graph):
+def nodes_in_degree_percentage(graph):
     degree_sequence = sorted([d for n, d in graph.in_degree()], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
     plt.plot(deg, cnt, color="purple")
     plt.xlim([0, 20])
@@ -171,10 +171,10 @@ def nodesInDegreePercentage(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
     
-def nodesInStrengthPercentage(graph):
+def nodes_in_strength_percentage(graph):
     degree_sequence = sorted([d for n, d in graph.in_degree(weight="weight")], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
     plt.plot(deg, cnt, color="purple")
     plt.xlim([0, 20])
@@ -184,10 +184,10 @@ def nodesInStrengthPercentage(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
 
-def nodesOutStrengthPercentage(graph):
+def nodes_out_strength_percentage(graph):
     degree_sequence = sorted([d for n, d in graph.out_degree(weight="weight")], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
     plt.plot(deg, cnt, color="purple")
     plt.xlim([0, 20])
@@ -197,13 +197,12 @@ def nodesOutStrengthPercentage(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
 
-def nodesOutDegreePercentage(graph):
+def nodes_out_degree_percentage(graph):
     degree_sequence = sorted([d for n, d in graph.out_degree()], reverse=True)
-    degreeCount = Counter(degree_sequence)
-    deg, cnt = zip(*degreeCount.items())
+    degree_count = Counter(degree_sequence)
+    deg, cnt = zip(*degree_count.items())
     cnt = tuple((i/graph.number_of_nodes()) * 100 for i in cnt)
     plt.plot(deg, cnt, color="purple")
-    #plt.yscale("log")
     plt.xlim([0, 20])
     plt.ylim([0.01, 100])
     plt.title('Out-Degree and nodes percentage')
@@ -211,7 +210,7 @@ def nodesOutDegreePercentage(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
 
-def nodesPercentageIncomingLink(graph):
+def nodes_percentage_incoming_link(graph):
     nodes_with_one_in_link = [n for n in graph.nodes() if graph.in_degree(n) == 1]
     outdegree = dict(graph.out_degree())
     top_nodes = sorted(outdegree, key=outdegree.get, reverse=True)[:5]
@@ -222,7 +221,7 @@ def nodesPercentageIncomingLink(graph):
 
     print("Percentage of nodes with one incoming edge from out degree hubs = " + str((len(nodes_with_one_incoming_edge_from_out_degree_hubs)*100)/(len(nodes_with_one_in_link))))
 
-def shortestPathAnalysisScc(graph):
+def shortest_path_analysis_scc(graph):
     scc_subgraphs = (graph.subgraph(c) for c in nx.strongly_connected_components(graph))
     largest_scc = max(scc_subgraphs, key=len)
     shortest_paths = nx.shortest_path(largest_scc)
@@ -247,7 +246,7 @@ def shortestPathAnalysisScc(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
 
-def shortestPathAnalysisWcc(graph):
+def shortest_path_analysis_wcc(graph):
     shortest_paths = nx.shortest_path(graph)
     path_lengths = {}
     total_paths = 0
@@ -270,7 +269,7 @@ def shortestPathAnalysisWcc(graph):
     plt.ylabel('Nodes percentage')
     plt.show()
 
-def robustnessAttackLargestWcc(graph):
+def robustness_attack_largest_wcc(graph):
     initial_size_wcc = len(max(nx.weakly_connected_components(graph), key=len))
     sizes_random = []
     removed_perc_random = []
@@ -367,7 +366,7 @@ def robustnessAttackLargestWcc(graph):
     plt.legend()
     plt.show()
 
-def robustnessAttackEfficiency(graph):
+def robustness_attack_efficiency(graph):
     initial_size_wcc = len(max(nx.weakly_connected_components(graph), key=len))
     efficiency_random = []
     removed_perc_random = []
@@ -415,7 +414,7 @@ def robustnessAttackEfficiency(graph):
     plt.legend()
     plt.show()
 
-def communityAnalysisGreedy(graph):
+def community_analysis_greedy(graph):
     greens = np.linspace(1, 0, 5)
     colors = [(0, green, 0) for green in greens]
     communities = nx.algorithms.community.greedy_modularity_communities(graph, weight="weight",resolution=1)
@@ -427,7 +426,7 @@ def communityAnalysisGreedy(graph):
     plt.ylabel('Nodes percentage per communities')
     plt.show()
 
-def betweennessCentrality(graph):
+def betweenness_centrality(graph):
     greens = np.linspace(1, 0, 5)
     colors = [(0, green, 0) for green in greens]
     centrality = nx.betweenness_centrality(graph)
@@ -441,7 +440,7 @@ def betweennessCentrality(graph):
     plt.ylabel('Betweenness Centrality')
     plt.show()
 
-def inClosenessCentrality(graph):
+def in_closeness_centrality(graph):
     yellows = np.linspace(1, 0, 5)
     colors = [(yellow, yellow, 0) for yellow in yellows]
     centrality = nx.closeness_centrality(graph)
@@ -455,7 +454,7 @@ def inClosenessCentrality(graph):
     plt.ylabel('In-Closeness Centrality')
     plt.show()
 
-def outClosenessCentrality(graph):
+def out_closeness_centrality(graph):
     pinks = np.linspace(1, 0, 5)
     colors = [(pink, 0.5*pink, 0.5*pink) for pink in pinks]
     centrality = nx.closeness_centrality(graph.reverse())
@@ -469,7 +468,7 @@ def outClosenessCentrality(graph):
     plt.ylabel('Out-Closeness Centrality')
     plt.show()
 
-def pageRankCentrality(graph):
+def pagerank_centrality(graph):
     blues = np.linspace(1, 0, 5)
     colors = [(0, 0, blue) for blue in blues]
     centrality = nx.pagerank(graph, weight="weight")
@@ -483,7 +482,7 @@ def pageRankCentrality(graph):
     plt.ylabel('PageRank Centrality')
     plt.show()
 
-def hubScore(graph):
+def hub_score(graph):
     mixed = np.linspace(0, 1, 5)
     colors = [(0, green, blue) for green, blue in zip(mixed, reversed(mixed))]
     centrality = nx.hits(graph, normalized=True, tol=1e-08)[0]
@@ -499,7 +498,7 @@ def hubScore(graph):
     plt.ylabel('Hub Score')
     plt.show()
 
-def authScore(graph):
+def auth_score(graph):
     oranges = np.linspace(1, 0, 5)
     colors = [(orange, orange/2, 0) for orange in oranges]
     centrality = nx.hits(graph, normalized=True, tol=1e-08)[1]
@@ -515,7 +514,7 @@ def authScore(graph):
     plt.ylabel('Authority Score')
     plt.show()
 
-def inDegreeCentrality(graph):
+def in_degree_centrality(graph):
     reds = np.linspace(1, 0, 5) 
     colors = [(red, 0, 0) for red in reds] 
     centrality = dict(graph.in_degree())
@@ -529,7 +528,7 @@ def inDegreeCentrality(graph):
     plt.ylabel('In-Degree Score')
     plt.show()
 
-def inStrengthCentrality(graph):
+def in_strength_centrality(graph):
     n = 5
     colors = [(purple, 0, purple) for purple in np.linspace(1, 0, n)]
     centrality = dict(graph.in_degree(weight="weight"))
@@ -543,7 +542,7 @@ def inStrengthCentrality(graph):
     plt.ylabel('In-Strength Score')
     plt.show()
 
-def outDegreeCentrality(graph):
+def out_degree_centrality(graph):
     n = 5
     colors = [(0, 0, blue) for blue in np.linspace(1, 0, n)]
     centrality = dict(graph.out_degree())
@@ -557,7 +556,7 @@ def outDegreeCentrality(graph):
     plt.ylabel('Out-Degree Score')
     plt.show()
 
-def outStrengthCentrality(graph):
+def out_strength_centrality(graph):
     n = 5
     colors = [(0, gray, gray) for gray in np.linspace(1, 0, n)]
     centrality = dict(graph.out_degree(weight="weight"))
@@ -571,7 +570,7 @@ def outStrengthCentrality(graph):
     plt.ylabel('Out-Strength Score')
     plt.show()
 
-def linkPredictionPreferentialAttachment(graph):
+def link_prediction_preferential_attachment(graph):
     greens = np.linspace(1, 0, 5)
     colors = [(0, green, 0) for green in greens]
     undirected_graph = graph.to_undirected()
@@ -587,7 +586,7 @@ def linkPredictionPreferentialAttachment(graph):
     plt.title("Link prediction Preferential Attachment")
     plt.show()
 
-def linkPredictionResourceAllocationIndex(graph):
+def link_prediction_resource_allocation_index(graph):
     oranges = np.linspace(1, 0, 5)
     colors = [(orange, orange/2, 0) for orange in oranges]
     undirected_graph = graph.to_undirected()
@@ -603,7 +602,7 @@ def linkPredictionResourceAllocationIndex(graph):
     plt.title("Link prediction Resource Allocation Index")
     plt.show()
 
-def linkPredictionCommonNeighbours(graph):
+def link_prediction_common_neighbours(graph):
     n = 5
     colors = [(purple, 0, purple) for purple in np.linspace(1, 0, n)]
     undirected_graph = graph.to_undirected()
@@ -669,36 +668,6 @@ def kshell(graph):
    
 
 def main():
-    graph = createGraph()
-    #initialStats(graph)                -- done
-    #inDegreeDistribution(graph)        -- done
-    #outDegreeDistribution(graph)       -- done
-    #inStrengthDistribution(graph)      -- done
-    #outStrengthDistribution(graph)     -- done
-    nodesInDegreePercentage(graph)     #-- done
-    #nodesInStrengthPercentage(graph)   -- done
-    #nodesOutDegreePercentage(graph)    -- done
-    #nodesOutStrengthPercentage(graph)  -- done
-    #nodesPercentageIncomingLink(graph) -- done
-    #shortestPathAnalysisScc(graph)     -- done
-    #shortestPathAnalysisWcc(graph)     -- done
-    #robustnessAttackLargestWcc(graph)  -- done
-    #robustnessAttackEfficiency(graph)  -- done
-    #communityAnalysisGreedy(graph)     -- done
-    #betweennessCentrality(graph)       -- done
-    #inClosenessCentrality(graph)       -- done
-    #outClosenessCentrality(graph)      -- done
-    #pageRankCentrality(graph)          -- done
-    #hubScore(graph)                    -- done
-    #authScore(graph)                   -- done
-    #inDegreeCentrality(graph)             -- done
-    #outDegreeCentrality(graph)            -- done
-    #inStrengthCentrality(graph)           -- done
-    #outStrengthCentrality(graph)          -- done
-    #linkPredictionPreferentialAttachment(graph)    --done
-    #linkPredictionResourceAllocationIndex(graph)   --done
-    #linkPredictionCommonNeighbours(graph)      --done
-    #kshell(graph)                          -- done
-
+    graph = create_graph()
 
 main()
