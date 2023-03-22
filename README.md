@@ -1,10 +1,6 @@
 # DarkWeb Graph Analysis 🌐
 
 <p align="center"> 
-  <img src="https://user-images.githubusercontent.com/91635053/227003653-e4f680e7-0b2d-4512-a974-4c48585b9eff.png" alt="Network Image" height="110px" width="900px">
-</p>
-
-<p align="center"> 
   <img src="https://user-images.githubusercontent.com/91635053/226994382-dc066ac4-dcb8-4a14-b032-593e204d79b8.png" alt="Network Image" height="300px" width="300px">
 </p>
 
