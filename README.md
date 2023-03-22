@@ -70,7 +70,7 @@ Some initial stats:
 
 | | |
 |:-------------------------:|:-------------------------:|
-|<img src="https://user-images.githubusercontent.com/91635053/227004581-964b0927-2d24-4e10-8177-5a903ddbc93a.png" alt="Network Image" height="282px" width="380"> |  <img src="https://user-images.githubusercontent.com/91635053/227004630-21b7807e-d9c8-42e4-b753-46a4595b6a04.png" alt="Network Image" height="282px" width="380"> |
+|<p><img src="https://user-images.githubusercontent.com/91635053/227004581-964b0927-2d24-4e10-8177-5a903ddbc93a.png" alt="Network Image" height="282px" width="380"> |  <p><img src="https://user-images.githubusercontent.com/91635053/227004630-21b7807e-d9c8-42e4-b753-46a4595b6a04.png" alt="Network Image" height="282px" width="380"> |
 
 </div>
 
