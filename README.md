@@ -68,9 +68,10 @@ Some initial stats:
 <br>
 <div align="center">
 
-| | |
-|:-------------------------:|:-------------------------:|
-|<p><img src="https://user-images.githubusercontent.com/91635053/227004581-964b0927-2d24-4e10-8177-5a903ddbc93a.png" alt="Network Image" height="282px" width="380"> |  <p><img src="https://user-images.githubusercontent.com/91635053/227004630-21b7807e-d9c8-42e4-b753-46a4595b6a04.png" alt="Network Image" height="282px" width="380"> |
+  <p align="center">
+    <img src="https://user-images.githubusercontent.com/91635053/227004581-964b0927-2d24-4e10-8177-5a903ddbc93a.png" alt="Network Image" height="282px" width="380"> 
+  <p align="center">
+    <img src="https://user-images.githubusercontent.com/91635053/227004630-21b7807e-d9c8-42e4-b753-46a4595b6a04.png" alt="Network Image" height="282px" width="380"> 
 
 </div>
 
@@ -79,10 +80,10 @@ We can analyze what is the network response regarding failures (random attacks) 
 
 <div align="center">
 
-
-| | |
-|:-------------------------:|:-------------------------:|
-|<img src="https://user-images.githubusercontent.com/91635053/227018847-52592976-d9d1-489a-bd43-2bece0e41cbf.png" alt="Network Image" height="282px" width="360"> |  <img src="https://user-images.githubusercontent.com/91635053/227018984-435aadaf-85b8-416c-9546-10d2e490e87d.png" alt="Network Image" height="282px" width="360"> |
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/91635053/227018847-52592976-d9d1-489a-bd43-2bece0e41cbf.png" alt="Network Image" height="282px" width="360"> 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/91635053/227018984-435aadaf-85b8-416c-9546-10d2e490e87d.png" alt="Network Image" height="282px" width="360"> 
 
 </div>
 
